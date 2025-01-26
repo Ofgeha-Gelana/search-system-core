@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Upload a Document or Provide a URL to Search</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+        <label for="file">Upload a file:</label>
+        <input type="file" name="file" id="file" accept=".pdf,.docx">
+        <br><br>
+        <label for="url">Or enter a URL:</label>
+        <input type="text" name="url" id="url">
+        <br><br>
+        <input type="submit" value="Upload and Search">
+    </form>
+
+    <h1>Search Documents</h1>
+    <form action="/search" method="GET">
+        <label for="query">Enter Search Query:</label>
+        <input type="text" name="query" id="query">
+        <br><br>
+        <label for="top_results">Number of Results:</label>
+        <input type="number" name="top_results" id="top_results" min="1" max="10">
+        <br><br>
+        <input type="submit" value="Search">
+    </form>
+</body>
+</html>
