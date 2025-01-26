@@ -1,0 +1,48 @@
+/* style.css */
+
+/* General styling for title and subtitle */
+.title {
+    text-align: center;
+    color: #2d2d2d;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 20px;
+}
+.subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: #5a5a5a;
+}
+
+/* Styling for file uploader and URL input */
+.file-uploader, .url-input {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+.file-uploader button, .url-input input {
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 2px solid #ddd;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+.file-uploader button:hover, .url-input input:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+/* Styling for results container */
+.results {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+}
+
+/* Styling for individual result items */
+.result-item {
+    margin-bottom: 15px;
+}
