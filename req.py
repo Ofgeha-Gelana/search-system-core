@@ -369,6 +369,9 @@ nltk.download("wordnet")
 # --- Initialization ---
 lemmatizer = WordNetLemmatizer()
 
+nlp = spacy.load("en_core_web_sm")
+
+
 # --- Text Extraction Functions ---
 def extract_pdf_text(file):
     """Extract text from a PDF file."""
@@ -406,9 +409,14 @@ def preprocess_text(docs):
     return cleaned_docs
 
 # --- Utility Functions ---
+# def split_into_sentences(text):
+#     """Split text into sentences."""
+#     return nltk.sent_tokenize(text)
+
 def split_into_sentences(text):
-    """Split text into sentences."""
-    return nltk.sent_tokenize(text)
+    """Split text into sentences using SpaCy."""
+    doc = nlp(text)
+    return [sent.text for sent in doc.sents]
 
 def get_similar_sentences(query, vectorizer, df, top_n=5):
     """Find similar sentences based on cosine similarity."""
