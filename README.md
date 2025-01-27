@@ -17,7 +17,7 @@ A powerful, intuitive, and efficient **Document Search System** built with Pytho
 
 ## 🖥️ Demo
 
-> **[Comment here]:** Insert a screenshot or GIF of your app in action showing the upload, search, and results functionality.
+> **[![Comment here](https://raw.githubusercontent.com/Ofgeha-Gelana/search-system-core/refs/heads/main/static/Screenshot%202025-01-27%20045157.png)]:** Insert a screenshot or GIF of your app in action showing the upload, search, and results functionality.
 
 ---
 
