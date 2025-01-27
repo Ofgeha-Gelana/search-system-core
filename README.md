@@ -16,7 +16,7 @@ A powerful, intuitive, and efficient **Document Search System** built with Pytho
 ---
 
 ## 🖥️ Demo 
-[Link Text](URL)
+[Interactive Demo - Search System](https://search-system-core.streamlit.app/)
 
 
 > **[![Comment here](https://raw.githubusercontent.com/Ofgeha-Gelana/search-system-core/refs/heads/main/static/Screenshot%202025-01-27%20045157.png)]:**
