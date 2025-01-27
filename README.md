@@ -1,32 +1,34 @@
-# Document Search System
+# 📄 Document Search System
 
-The **Document Search System** is a versatile web application built with **Streamlit** that allows users to upload PDF or Word documents, or enter a website URL to scrape and search for specific queries within the document. The system utilizes advanced text processing techniques, including **TF-IDF vectorization** and **lemmatization**, to retrieve relevant sentences based on cosine similarity.
+A powerful, intuitive, and efficient **Document Search System** built with Python and Streamlit. This tool allows you to upload files (PDF, Word) or input website URLs, extract their text, and search for relevant information using advanced Natural Language Processing (NLP) techniques.
 
-## Features
+---
 
-- **File Upload**: Upload PDF or Word documents for text extraction.
-- **Website Scraping**: Extract text from websites by providing a URL.
-- **Text Preprocessing**: Clean and preprocess text (remove punctuation, lemmatize, etc.).
-- **Search**: Perform query-based searches to find the most similar sentences in the document.
-- **Similarity Scoring**: Results are ranked based on cosine similarity.
-- **Customizable Results**: Adjust the number of search results shown using a slider.
+## 🚀 Features
 
-## Requirements
+- 📂 **File Upload**: Supports PDF and Word document uploads for text extraction.
+- 🌐 **URL Input**: Fetch and process text directly from websites.
+- 🧹 **Text Preprocessing**: Advanced cleaning, lemmatization, and tokenization of text.
+- 🔍 **Search Engine**: Uses TF-IDF vectorization and cosine similarity to find relevant sentences.
+- ⚡ **Interactive UI**: Easy-to-use Streamlit interface for seamless navigation.
+- 📊 **Customizable Results**: Adjust the number of top search results dynamically.
 
-Before running the project, ensure you have the following dependencies installed:
+---
 
-- Python 3.8 or higher
-- `streamlit`
-- `nltk`
-- `spacy`
-- `pandas`
-- `numpy`
-- `scikit-learn`
-- `fitz` (PyMuPDF)
-- `python-docx`
-- `requests`
-- `beautifulsoup4`
-- `io`
+## 🖥️ Demo
+
+> **[Comment here]:** Insert a screenshot or GIF of your app in action showing the upload, search, and results functionality.
+
+---
+
+## 🛠️ Installation and Setup
+
+Follow these steps to set up the project on your local system:
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/document-search-system.git
+   cd document-search-system
 
 To install all the required libraries, run:
 
