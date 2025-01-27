@@ -1,146 +1,343 @@
+# import re
+# import string
+# import numpy as np
+# import pandas as pd
+# import nltk
+# import spacy
+# import streamlit as st
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# from nltk.corpus import stopwords
+# from nltk.stem import WordNetLemmatizer
+# import fitz  # PyMuPDF for PDF text extraction
+# from docx import Document  # python-docx for Word documents
+# from bs4 import BeautifulSoup
+# import requests
+# import io  # To handle file-like objects for PDF processing
+
+# # --- NLTK Setup ---
+# nltk.download("stopwords")
+# nltk.download("punkt")
+# nltk.download("wordnet")
+
+# # --- Initialization ---
+# lemmatizer = WordNetLemmatizer()
+
+# # --- Text Extraction Functions ---
+# def extract_pdf_text(file):
+#     """Extract text from a PDF file."""
+#     doc = fitz.open(stream=file.read(), filetype="pdf")
+#     text = "".join([page.get_text() for page in doc])
+#     return text.strip()
+
+# def extract_word_text(file):
+#     """Extract text from a Word document."""
+#     doc = Document(file)
+#     text = "\n".join([para.text for para in doc.paragraphs])
+#     return text.strip()
+
+# def extract_website_text(url):
+#     """Extract text from a website URL."""
+#     response = requests.get(url)
+#     soup = BeautifulSoup(response.content, "html.parser")
+#     paragraphs = soup.find_all("p")
+#     text = " ".join([para.get_text() for para in paragraphs])
+#     return text.strip()
+
+# # --- Text Preprocessing ---
+# def preprocess_text(docs):
+#     """Clean and lemmatize text data."""
+#     cleaned_docs = []
+#     for doc in docs:
+#         doc = re.sub(r'[^\x00-\x7F]+', ' ', doc)  # Remove non-ASCII characters
+#         doc = re.sub(r'@\w+', '', doc)  # Remove mentions
+#         doc = doc.lower()  # Convert to lowercase
+#         doc = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', doc)  # Remove punctuation
+#         doc = re.sub(r'\d+', '', doc)  # Remove numbers
+#         doc = re.sub(r'\s{2,}', ' ', doc)  # Remove extra spaces
+#         lemmatized_doc = " ".join([lemmatizer.lemmatize(word) for word in doc.split()])
+#         cleaned_docs.append(lemmatized_doc)
+#     return cleaned_docs
+
+# # --- Utility Functions ---
+# def split_into_sentences(text):
+#     """Split text into sentences."""
+#     return nltk.sent_tokenize(text)
+
+# def get_similar_sentences(query, vectorizer, df, top_n=5):
+#     """Find similar sentences based on cosine similarity."""
+#     query = preprocess_text([query])  # Preprocess the query
+#     query_vec = vectorizer.transform(query).toarray().flatten()
+
+#     similarity_scores = {}
+#     for i, sentence in enumerate(new_docs):
+#         sentence_vec = X[i].toarray().flatten()
+#         numerator = np.dot(query_vec, sentence_vec)
+#         denominator = np.linalg.norm(query_vec) * np.linalg.norm(sentence_vec)
+#         similarity = numerator / denominator if denominator != 0 else 0
+#         similarity_scores[i] = similarity
+
+#     # Sort by similarity scores in descending order
+#     sorted_scores = sorted(similarity_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
+
+#     results = []
+#     for idx, score in sorted_scores:
+#         if score > 0:  # Only include sentences with positive similarity
+#             results.append((f"Sentence {idx + 1}", sentences[idx], score))
+#     return results
+
+# # --- Streamlit UI ---
+# # Load custom styling
+# st.markdown(
+#     """
+#     <style>
+#     .title {
+#         font-size: 36px;
+#         color: #4CAF50;
+#         text-align: center;
+#         font-weight: bold;
+#     }
+#     .subtitle {
+#         font-size: 18px;
+#         text-align: center;
+#         color: #555;
+#     }
+#     .menu-btn {
+#         background-color: #007BFF;
+#         color: white;
+#         border: none;
+#         border-radius: 5px;
+#         padding: 10px 20px;
+#         margin: 10px;
+#         font-size: 16px;
+#         cursor: pointer;
+#         text-align: center;
+#     }
+#     .menu-btn:hover {
+#         background-color: #0056b3;
+#     }
+#     .results {
+#         margin-top: 20px;
+#     }
+#     .result-item {
+#         background-color: #f8f9fa;
+#         padding: 10px;
+#         border-radius: 8px;
+#         margin-bottom: 10px;
+#         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+#     }
+#     </style>
+#     """,
+#     unsafe_allow_html=True,
+# )
+
+# st.markdown('<div class="title">Document Search System</div>', unsafe_allow_html=True)
+# st.markdown('<div class="subtitle">Upload a document or provide a URL to perform a search query.</div>', unsafe_allow_html=True)
+
+# # --- Menu Options ---
+# st.markdown('<div style="text-align: center;">', unsafe_allow_html=True)
+# option = st.radio("Choose Input Method:", ["Upload File", "Enter URL"], horizontal=True)
+# st.markdown('</div>', unsafe_allow_html=True)
+
+# # --- Input Handling ---
+# document_text = ""
+# if option == "Upload File":
+#     uploaded_file = st.file_uploader("Upload a PDF or Word document", type=["pdf", "docx"])
+#     if uploaded_file:
+#         if uploaded_file.type == "application/pdf":
+#             document_text = extract_pdf_text(uploaded_file)
+#         elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+#             document_text = extract_word_text(uploaded_file)
+#         else:
+#             st.warning("Unsupported file format. Please upload a PDF or Word document.")
+# elif option == "Enter URL":
+#     url_input = st.text_input("Enter website URL:")
+#     if url_input:
+#         document_text = extract_website_text(url_input)
+
+# # --- Text Processing and Query ---
+# if document_text:
+#     sentences = split_into_sentences(document_text)
+#     new_docs = preprocess_text(sentences)
+
+#     vectorizer = TfidfVectorizer(
+#         analyzer="word",
+#         ngram_range=(1, 2),
+#         min_df=0.01,
+#         max_df=0.85,
+#         stop_words="english",
+#     )
+#     X = vectorizer.fit_transform(new_docs)
+
+#     query = st.text_input("Enter search query:")
+#     top_n_results = st.slider("Number of top results to display:", min_value=1, max_value=20, value=5, step=1)
+
+#     if query:
+#         results = get_similar_sentences(query, vectorizer, df=None, top_n=top_n_results)
+#         if results:
+#             st.markdown('<div class="results">', unsafe_allow_html=True)
+#             for title, sentence, score in results:
+#                 st.markdown(
+#                     f'<div class="result-item"><strong>{title}</strong><br><em>Similarity Score: {score:.4f}</em><br>{sentence}</div>',
+#                     unsafe_allow_html=True,
+#                 )
+#             st.markdown('</div>', unsafe_allow_html=True)
+#         else:
+#             st.info("No similar sentences found.")
+# else:
+#     st.info("Upload a document or enter a website URL to begin.")
+
+
+
+
+
 import re
 import string
 import numpy as np
 import pandas as pd
+import nltk
+import spacy
 import streamlit as st
 from sklearn.feature_extraction.text import TfidfVectorizer
-import nltk
-from nltk.tokenize import sent_tokenize
-from PyPDF2 import PdfReader
-import docx
-import requests
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+import fitz  # PyMuPDF for PDF text extraction
+from docx import Document  # python-docx for Word documents
 from bs4 import BeautifulSoup
+import requests
+import io  # To handle file-like objects for PDF processing
 
-# Download NLTK resources
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
+# --- NLTK Setup ---
+nltk.download("stopwords")
+nltk.download("punkt")
+nltk.download("wordnet")
 
-# Initialize lemmatizer and stopwords
-stopwords_list = nltk.corpus.stopwords.words("english")
-custom_stopwords = stopwords_list + ["things", "that's", "something", "take", "don't", "may", "want", "you're", 
-                                    "set", "might", "says", "including", "lot", "much", "said", "know", "good", 
-                                    "step", "often", "thing", "things", "think", "back", "actually", "better", 
-                                    "look", "find", "right", "example", "verb", "verbs"]
+# --- Initialization ---
+lemmatizer = WordNetLemmatizer()
 
-# Initialize the TF-IDF vectorizer
-vectorizer = TfidfVectorizer(analyzer='word',
-                              ngram_range=(1, 2),
-                              min_df=0.002,
-                              max_df=0.99,
-                              max_features=10000,
-                              lowercase=True,
-                              stop_words=custom_stopwords)
+# --- Text Extraction Functions ---
+def extract_pdf_text(file):
+    """Extract text from a PDF file."""
+    doc = fitz.open(stream=file.read(), filetype="pdf")
+    text = "".join([page.get_text() for page in doc])
+    return text.strip()
 
-# Function to extract text from a PDF file
-def extract_pdf_text(pdf_file):
-    pdf_reader = PdfReader(pdf_file)
-    text = ""
-    for page in pdf_reader.pages:
-        text += page.extract_text()
-    return text
+def extract_word_text(file):
+    """Extract text from a Word document."""
+    doc = Document(file)
+    text = "\n".join([para.text for para in doc.paragraphs])
+    return text.strip()
 
-# Function to extract text from a Word document
-def extract_word_text(doc_file):
-    doc = docx.Document(doc_file)
-    text = ""
-    for para in doc.paragraphs:
-        text += para.text + "\n"
-    return text
-
-# Function to extract text from a website
-def extract_web_text(url):
+def extract_website_text(url):
+    """Extract text from a website URL."""
     response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    paragraphs = soup.find_all('p')
+    soup = BeautifulSoup(response.content, "html.parser")
+    paragraphs = soup.find_all("p")
     text = " ".join([para.get_text() for para in paragraphs])
-    return text
+    return text.strip()
 
-# Streamlit app layout
-st.title('Article Similarity Search')
+# --- Text Preprocessing ---
+def preprocess_text(docs):
+    """Clean and lemmatize text data."""
+    cleaned_docs = []
+    for doc in docs:
+        doc = re.sub(r'[^\x00-\x7F]+', ' ', doc)  # Remove non-ASCII characters
+        doc = re.sub(r'@\w+', '', doc)  # Remove mentions
+        doc = doc.lower()  # Convert to lowercase
+        doc = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', doc)  # Remove punctuation
+        doc = re.sub(r'\d+', '', doc)  # Remove numbers
+        doc = re.sub(r'\s{2,}', ' ', doc)  # Remove extra spaces
+        lemmatized_doc = " ".join([lemmatizer.lemmatize(word) for word in doc.split()])
+        cleaned_docs.append(lemmatized_doc)
+    return cleaned_docs
 
-# File upload (PDF or Word)
-uploaded_file = st.file_uploader("Upload a PDF or Word document", type=["pdf", "docx"])
+# --- Utility Functions ---
+def split_into_sentences(text):
+    """Split text into sentences."""
+    return nltk.sent_tokenize(text)
 
-# Web URL input
-url_input = st.text_input("Or provide a URL to search a website")
+def get_similar_sentences(query, vectorizer, df, top_n=5):
+    """Find similar sentences based on cosine similarity."""
+    query = preprocess_text([query])  # Preprocess the query
+    query_vec = vectorizer.transform(query).toarray().flatten()
 
-# Function to get sentences containing a word (e.g., "ethiopia")
-def get_sentences_with_word(doc_text, word):
-    sentences = sent_tokenize(doc_text)
-    return [sentence for sentence in sentences if word.lower() in sentence.lower()]
+    similarity_scores = {}
+    for i, sentence in enumerate(new_docs):
+        sentence_vec = X[i].toarray().flatten()
+        numerator = np.dot(query_vec, sentence_vec)
+        denominator = np.linalg.norm(query_vec) * np.linalg.norm(sentence_vec)
+        similarity = numerator / denominator if denominator != 0 else 0
+        similarity_scores[i] = similarity
 
-if uploaded_file is not None:
+    # Sort by similarity scores in descending order
+    sorted_scores = sorted(similarity_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
+
+    results = []
+    for idx, score in sorted_scores:
+        if score > 0:  # Only include sentences with positive similarity
+            results.append((f"Sentence {idx + 1}", sentences[idx], score))
+    return results
+
+# --- Streamlit UI ---
+st.title("Document Search System")
+st.subheader("Upload a document or provide a URL to perform a search query.")
+
+# File upload for PDF or Word documents
+uploaded_file = st.file_uploader("Upload a PDF or Word document", type=["pdf", "docx"], key="file_uploader")
+
+# URL input for scraping text
+url_input = st.text_input("Enter website URL (for scraping)", key="url_input")
+
+# Initialize document text
+document_text = ""
+
+# Extract text from the uploaded file or URL
+if uploaded_file:
     if uploaded_file.type == "application/pdf":
-        # Extract text from PDF
-        pdf_text = extract_pdf_text(uploaded_file)
-        document_clean = pdf_text
+        document_text = extract_pdf_text(uploaded_file)
     elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        # Extract text from Word document
-        word_text = extract_word_text(uploaded_file)
-        document_clean = word_text
-    
-    # Clean and preprocess the text
-    document_clean = re.sub(r'[^\x00-\x7F]+', ' ', document_clean)  # Remove non-ASCII characters
-    document_clean = re.sub(r'@\w+', '', document_clean)  # Remove mentions
-    document_clean = document_clean.lower()  # Convert to lowercase
-    document_clean = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', document_clean)  # Remove punctuation
-    document_clean = re.sub(r'[0-9]', '', document_clean)  # Remove numbers
-    document_clean = re.sub(r'\s{2,}', ' ', document_clean)  # Remove multiple spaces
+        document_text = extract_word_text(uploaded_file)
+    else:
+        st.warning("Unsupported file format. Please upload a PDF or Word document.")
 
-    # Get sentences containing 'ethiopia'
-    ethiopia_sentences = get_sentences_with_word(document_clean, "ethiopia")
+if url_input:
+    document_text = extract_website_text(url_input)
 
-    # Example output format
-    st.write("searched items : ethiopia")
-    st.write("\n")
-    st.write("Article with the Highest Cosine Similarity Values:")
+if document_text:
+    # Split and preprocess the text
+    sentences = split_into_sentences(document_text)
+    new_docs = preprocess_text(sentences)
 
-    # Output with sentence separation and similarity scores
-    similarity_scores = [
-        0.2673433484640173, 
-        0.15996489348662396, 
-        0.14582664099950898, 
-        0.10616749261620534, 
-        0.08585732144317441
-    ]
-    
-    for score, sentence in zip(similarity_scores, ethiopia_sentences[:5]):  # Display top 5 sentences
-        st.write(f"Similaritas score: {score}")
-        st.write(f"\n{sentence}")
-        st.write("\n" + "-"*100 + "\n")  # A separator to clearly distinguish each block
-    
-elif url_input:
-    # Extract text from URL
-    website_text = extract_web_text(url_input)
-    document_clean = website_text
-    
-    # Clean and preprocess the text
-    document_clean = re.sub(r'[^\x00-\x7F]+', ' ', document_clean)  # Remove non-ASCII characters
-    document_clean = re.sub(r'@\w+', '', document_clean)  # Remove mentions
-    document_clean = document_clean.lower()  # Convert to lowercase
-    document_clean = re.sub(r'[%s]' % re.escape(string.punctuation), ' ', document_clean)  # Remove punctuation
-    document_clean = re.sub(r'[0-9]', '', document_clean)  # Remove numbers
-    document_clean = re.sub(r'\s{2,}', ' ', document_clean)  # Remove multiple spaces
-    
-    # Get sentences containing 'ethiopia'
-    ethiopia_sentences = get_sentences_with_word(document_clean, "ethiopia")
+    # Vectorize the text
+    vectorizer = TfidfVectorizer(
+        analyzer="word",
+        ngram_range=(1, 2),  # Use unigrams and bigrams
+        min_df=0.01,  # Ignore very rare terms
+        max_df=0.85,  # Ignore extremely common terms
+        stop_words="english"
+    )
+    X = vectorizer.fit_transform(new_docs)
 
-    # Example output format
-    st.write("searched items : ethiopia")
-    st.write("\n")
-    st.write("Article with the Highest Cosine Similarity Values:")
+    # DataFrame for vectorized data
+    df = pd.DataFrame(X.T.toarray(), index=vectorizer.get_feature_names_out())
 
-    # Output with sentence separation and similarity scores
-    similarity_scores = [
-        0.2673433484640173, 
-        0.15996489348662396, 
-        0.14582664099950898, 
-        0.10616749261620534, 
-        0.08585732144317441
-    ]
-    
-    for score, sentence in zip(similarity_scores, ethiopia_sentences[:5]):  # Display top 5 sentences
-        st.write(f"Similaritas score: {score}")
-        st.write(f"\n{sentence}")
-        st.write("\n" + "-"*100 + "\n")  # A separator to clearly distinguish each block
+    # Search query input
+    query = st.text_input("Enter search query:")
+
+    # Slider to adjust the number of top results
+    top_n_results = st.slider("Number of top results to display:", min_value=1, max_value=20, value=5, step=1)
+
+    # Button to trigger search
+    if st.button("Search"):
+        if query:
+            # Display search results
+            results = get_similar_sentences(query, vectorizer, df, top_n=top_n_results)
+            if results:
+                st.markdown("### Search Results")
+                for title, sentence, score in results:
+                    st.write(f"**{title}**\n- {sentence}\n_Similarity Score: {score:.4f}_")
+            else:
+                st.info("No similar sentences found.")
+        else:
+            st.warning("Please enter a search query.")
+else:
+    st.info("Upload a document or enter a website URL to begin.")
